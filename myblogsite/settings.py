@@ -43,6 +43,7 @@ INSTALLED_APPS = [
     'taggit',
     'django.contrib.sites',
     'django.contrib.sitemaps',
+    'django.contrib.postgres',
 ]
 
 MIDDLEWARE = [
@@ -81,8 +82,12 @@ WSGI_APPLICATION = 'myblogsite.wsgi.application'
 
 DATABASES = {
     'default': {
-        'ENGINE': 'django.db.backends.sqlite3',
-        'NAME': BASE_DIR / 'db.sqlite3',
+        'ENGINE': 'django.db.backends.postgresql_psycopg2',
+        'NAME': 'myblogsite',
+        'USER': 'mayowablog',
+        'PASSWORD': 'blogpassword',
+        'HOST': 'localhost',
+        'PORT': '5432',
     }
 }
 
@@ -128,6 +133,8 @@ STATICFILES_DIR = [STATIC_DIR, ]
 MEDIA_ROOT = MEDIA_DIR
 MEDIA_URL = '/media/'
 AUTH_USER_MODEL = 'blog.CustomUser'    # use custom user model in place of built-in user model
+
+SITE_ID = 1
 
 EMAIL_HOST = 'smtp.sendgrid.net'
 EMAIL_USE_TLS = True
