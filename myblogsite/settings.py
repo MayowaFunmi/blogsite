@@ -135,7 +135,7 @@ MEDIA_URL = '/media/'
 AUTH_USER_MODEL = 'blog.CustomUser'    # use custom user model in place of built-in user model
 
 SITE_ID = 1
-
+TAGGIT_CASE_INSENSITIVE = True
 EMAIL_HOST = 'smtp.sendgrid.net'
 EMAIL_USE_TLS = True
 EMAIL_PORT = 587

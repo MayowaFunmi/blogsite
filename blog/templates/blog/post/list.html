@@ -25,7 +25,7 @@
                 {% endfor %}
         </p>
 
-        <p class="date">Published {{ post.publish }} by {{ post.author}}</p>
+        <p class="date">Published {{ post.publish }} by {{ post.author.first_name }} {{ post.author.last_name }}</p>
         {{ post.body|markdown|truncatewords_html:30 }}
 
     {% endfor %}

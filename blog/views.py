@@ -1,13 +1,38 @@
 from django.conf import settings
+from django.contrib.auth.decorators import login_required
 from django.contrib.postgres.search import SearchVector, SearchQuery, SearchRank
 from django.core.mail import send_mail
 from django.core.paginator import Paginator, PageNotAnInteger, EmptyPage
+from django.http import HttpResponseRedirect
 from django.shortcuts import render, get_object_or_404
 from taggit.models import Tag
 from django.db.models import Count
-from .forms import EmailPostForm, CommentForm, SearchForm
+from .forms import EmailPostForm, CommentForm, SearchForm, PostForm
 from .models import Post
 # Create your views here.
+
+
+@login_required
+def post_create(request):
+    if request.method == 'POST':
+        form = PostForm(request.POST)
+
+        if form.is_valid():
+            title = form.cleaned_data['title']
+            t_str = title.lower()
+            for i in range(0, len(t_str), 1):
+                if (t_str[i] == ' '):
+                    t_str = t_str.replace(t_str[i], '-')
+            obj = form.save(commit=False)
+            obj.author = request.user
+            obj.slug = t_str
+            obj.save()
+            form.save_m2m()
+            return HttpResponseRedirect('/blog/')
+
+    else:
+        form = PostForm()
+    return render(request, 'blog/post/create.html', {'form': form})
 
 
 def post_list(request, tag_slug=None):
@@ -126,3 +151,36 @@ def post_search(request):
     return render(request, 'blog/post/search.html', {'form': form,
                                                          'query': query,
                                                          'results': results})
+
+
+'''
+def create_post(request):
+    if request.method == 'POST':
+        title = request.POST['title']
+        body = request.POST['body']
+        tags = request.POST['tags']
+        t_str = title.lower()
+        for i in range(0, len(t_str), 1):
+            if (t_str[i] == ' '):
+                t_str = t_str.replace(t_str[i], '-')
+        x = list(tags.split())
+        last_x = x[-1]
+        others = x[:-1]
+        a = []
+        for y in others:
+            y.split()
+            b = y[:-1]
+            a.append(b)
+        new_str = ','.join(a) + ',' + last_x
+
+        add_post = Post(title=title, slug=t_str, body=body, tags=tags, author=request.user)
+        add_post.save()
+        # add_post.save_m2m()
+
+        return HttpResponseRedirect('/blog/')
+
+    else:
+        form = PostForm()
+    return render(request, 'blog/post/create.html', {'form': form})
+
+'''
