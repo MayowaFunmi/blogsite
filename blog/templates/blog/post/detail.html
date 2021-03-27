@@ -51,7 +51,7 @@
 
     <h1>{{ post.title }}</h1>
     <p class="date">
-        Published {{ post.publish }} by {{ post.author }}
+        Published {{ post.publish }} by {{ post.author.first_name }} {{ post.author.last_name }}
     </p>
     {{ post.body|markdown }}
 <p><em>Share this post on your social media page:</em></p>
