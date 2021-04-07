@@ -29,6 +29,8 @@ def post_create(request):
             obj.save()
             form.save_m2m()
             return HttpResponseRedirect('/blog/')
+        else:
+            print(form.errors)
 
     else:
         form = PostForm()
@@ -114,25 +116,6 @@ def post_share(request, post_id):
     return render(request, 'blog/post/share.html', {'post': post, 'form': form, 'sent': sent})
 
 
-'''
-earch against a single field using the search QuerySet lookup,
-like this:
-
-from blog.models import Post
-Post.objects.filter(body__search='django')
-
-You might want to search against multiple fields. In this case, you will need to define
-a SearchVector object. Let's build a vector that allows you to search against the
-title and body fields of the Post model:
-
-from django.contrib.postgres.search import SearchVector
-from blog.models import Post
-Post.objects.annotate(
-search=SearchVector('title', 'body'),
-).filter(search='django')
-'''
-
-
 def post_search(request):
     form = SearchForm()
     query = None
@@ -142,8 +125,8 @@ def post_search(request):
         if form.is_valid():
             query = form.cleaned_data['query']
             # results = Post.published.annotate(search=SearchVector('title', 'body'),).filter(search=query)
-            # search_vector = SearchVector('title', 'body')
-            search_vector = SearchVector('title', weight='A') + SearchVector('body', weight='B')
+            # search_vector = SearchVector('title', 'body', 'categories')
+            search_vector = SearchVector('title', weight='A') + SearchVector('body', weight='B') + SearchVector('categories__name', weight='B')
             search_query = SearchQuery(query)
             results = Post.published.annotate(search=search_vector,
                                               rank=SearchRank(search_vector, search_query)
@@ -151,6 +134,21 @@ def post_search(request):
     return render(request, 'blog/post/search.html', {'form': form,
                                                          'query': query,
                                                          'results': results})
+
+
+@login_required
+def blog_category(request, category):
+    posts = Post.objects.filter(
+        categories__name__contains=category
+    ).order_by(
+        '-publish'
+    )
+    print(category)
+    context = {
+        "category": category,
+        "posts": posts
+    }
+    return render(request, "blog/post/category_post_list.html", context)
 
 
 '''
@@ -183,4 +181,22 @@ def create_post(request):
         form = PostForm()
     return render(request, 'blog/post/create.html', {'form': form})
 
+'''
+
+'''
+Search against a single field using the search QuerySet lookup,
+like this:
+
+from blog.models import Post
+Post.objects.filter(body__search='django')
+
+You might want to search against multiple fields. In this case, you will need to define
+a SearchVector object. Let's build a vector that allows you to search against the
+title and body fields of the Post model:
+
+from django.contrib.postgres.search import SearchVector
+from blog.models import Post
+Post.objects.annotate(
+search=SearchVector('title', 'body'),
+).filter(search='django')
 '''

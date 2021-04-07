@@ -54,7 +54,7 @@
         Published {{ post.publish }} by {{ post.author.first_name }} {{ post.author.last_name }}
     </p>
     {{ post.body|markdown }}
-<p><em>Share this post on your social media page:</em></p>
+    <p><em>Share this post on your social media page:</em></p>
 
     <div class="share-btn-container">
         <a href="#" class="facebook-btn">
@@ -110,6 +110,7 @@
     {% else %}
         <h2>Add a new comment</h2>
         <form method="post">
+            {{ comment_form.media }}
             {{ comment_form.as_p }}
             {% csrf_token %}
             <p><input type="submit" value="Add comment"></p>

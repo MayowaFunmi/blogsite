@@ -1,0 +1,35 @@
+{% extends 'users/base.html' %}
+
+{% block title %}Sign Up Form{% endblock title %}
+
+
+{% block content %}
+    <div>
+        <h3>Please fill the form below to register.</h3>
+        <form method="POST" enctype="multipart/form-data">
+            {% csrf_token %}
+            <div class="mb-3">
+                <div class='error'>{{form.errors.username}}</div>
+                <div class='error'>{{form.errors.password}}</div>
+                <div class='error'>{{form.errors.photo}}</div>
+
+                {% for field in form %}
+                    <div class="form-label" style="font-style: italic; text-transform: capitalize; padding-top: 10px; padding-bottom: 5px; font-weight: bold;">
+                        {{ field.label }}:
+                    </div>
+
+                    <div style="color: red;">
+                        {{ field.errors }}
+                    </div>
+                    <div class="form-control">
+                        {{ field }}
+                    </div>
+                {% endfor %}
+            </div>
+
+            <button class="btn btn-success" type="submit">
+                Sign Up
+            </button>
+        </form>
+    </div>
+{% endblock %}
