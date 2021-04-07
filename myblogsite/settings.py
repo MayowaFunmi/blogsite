@@ -40,10 +40,13 @@ INSTALLED_APPS = [
     'django.contrib.messages',
     'django.contrib.staticfiles',
     'blog',
+    'users',
     'taggit',
     'django.contrib.sites',
     'django.contrib.sitemaps',
     'django.contrib.postgres',
+    'ckeditor',
+    'django_countries',
 ]
 
 MIDDLEWARE = [
@@ -128,11 +131,15 @@ USE_TZ = True
 # Static files (CSS, JavaScript, Images)
 # https://docs.djangoproject.com/en/3.1/howto/static-files/
 
+LOGIN_URL = '/users/login/'
 STATIC_URL = '/static/'
-STATICFILES_DIR = [STATIC_DIR, ]
+STATICFILES_DIRS = [STATIC_DIR,
+                    BASE_DIR / 'blog' / 'static',
+                    BASE_DIR / 'users' / 'static',
+                    ]
 MEDIA_ROOT = MEDIA_DIR
 MEDIA_URL = '/media/'
-AUTH_USER_MODEL = 'blog.CustomUser'    # use custom user model in place of built-in user model
+#AUTH_USER_MODEL = 'blog.CustomUser'     use custom user model in place of built-in user model
 
 SITE_ID = 1
 TAGGIT_CASE_INSENSITIVE = True

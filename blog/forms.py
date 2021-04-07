@@ -1,5 +1,5 @@
 from django import forms
-from .models import Comment, Post
+from .models import Comment, Post, Category
 
 
 class EmailPostForm(forms.Form):
@@ -9,10 +9,21 @@ class EmailPostForm(forms.Form):
     comments = forms.CharField(required=False, widget=forms.Textarea)
 
 
+'''
+choices = Category.objects.all().values_list('name', 'name')
+choice_list = []
+print(choices)
+for item in choices:
+    choice_list.append(item)
+'''
+
+
 class PostForm(forms.ModelForm):
     class Meta:
         model = Post
-        fields = ('title', 'body', 'tags')
+        fields = ('categories', 'title', 'body', 'tags')
+
+        #widgets = {'categories': forms.Select(choices=choice_list)}
 
 class CommentForm(forms.ModelForm):
     class Meta:

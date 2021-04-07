@@ -1,19 +1,10 @@
 from django.contrib import admin
 from django.contrib.auth.admin import UserAdmin
 
-from .models import CustomUser, Post, Comment
+from .models import Post, Comment, Category
 
 
 # Register your models here.
-
-@admin.register(CustomUser)
-class CustomUserAdmin(UserAdmin):
-    # add_form = CustomUserCreationForm
-    # form = CustomUserChangeForm
-    model = CustomUser
-    list_display = ['username', 'email', 'gender', 'interest', 'phone_number', 'first_name', 'last_name']
-    list_filter = ['interest']
-    search_fields = ('interest',)
 
 
 @admin.register(Post)
@@ -39,6 +30,8 @@ class CommentAdmin(admin.ModelAdmin):
     list_filter = ('active', 'created', 'updated')
     search_fields = ('name', 'email', 'body')
 
+
+admin.site.register(Category)
 
 admin.site.site_header = 'My Blog Site Admin'
 
@@ -68,5 +61,14 @@ class CustomUserAdmin(UserAdmin):
 
 
 admin.site.site_header = 'My Blog Site'
+
+@admin.register(CustomUser)
+class CustomUserAdmin(UserAdmin):
+    # add_form = CustomUserCreationForm
+    # form = CustomUserChangeForm
+    model = CustomUser
+    list_display = ['username', 'email', 'gender', 'interest', 'phone_number', 'first_name', 'last_name']
+    list_filter = ['interest']
+    search_fields = ('interest',)
 
 '''
