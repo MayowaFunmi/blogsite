@@ -1,0 +1,27 @@
+{% extends 'blog/base.html' %}
+
+{% block title %}User Profile Created{% endblock title %}
+
+{% block content %}
+    <h2>Thank You, {{ first_name }} {{ last_name }}.<br>
+        You Have Successfully Created Your Profile</h2>
+    <div>
+        Below Are Your Profile Details:
+        <p>
+            Username: {{ username }}<br>
+            Email: {{ email }}<br>
+            First Name: {{ first_name }}<br>
+            Surname: {{ last_name }}<br>
+            Date Of Birth: {{ date_of_birth }}<br>
+            Gender: {{ gender }}<br>
+            Nationality: {{ country }}<br>
+            City/State/Province: {{ city }}<br>
+            Address: {{ address }}<br>
+            Phone Number: {{ phone_number }}<br>
+            Your Interest: {{ interest }}<br>
+            About You: {{ about_me }}<br>
+            Profile Picture: <img src="{{ profile_picture }}" style="width: 100px; height=100px; border-radius: 20px;"><br>
+        </p>
+    </div>
+    <p>Proceed To <a href="{% url 'blog:post_list' %}">Blog Page</a></p>
+{% endblock %}

@@ -11,7 +11,7 @@
 
 {% block content %}
   <h2>Fill The Form Below To Create Your Profile</h2>
-  <form method="post" id="profileForm" data-cities-url="{% url 'users:ajax_load_cities' %}" novalidate>
+  <form method="post" id="profileForm" data-cities-url="{% url 'users:ajax_load_cities' %}" novalidate  enctype="multipart/form-data">
     {% csrf_token %}
     <table>
       {{ form.as_table }}

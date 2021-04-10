@@ -47,6 +47,12 @@ INSTALLED_APPS = [
     'django.contrib.postgres',
     'ckeditor',
     'django_countries',
+
+    'allauth',
+    'allauth.account',
+    'allauth.socialaccount',
+    'allauth.socialaccount.providers.google',
+    'allauth.socialaccount.providers.facebook',
 ]
 
 MIDDLEWARE = [
@@ -132,6 +138,7 @@ USE_TZ = True
 # https://docs.djangoproject.com/en/3.1/howto/static-files/
 
 LOGIN_URL = '/users/login/'
+LOGIN_REDIRECT_URL = '/blog/'
 STATIC_URL = '/static/'
 STATICFILES_DIRS = [STATIC_DIR,
                     BASE_DIR / 'blog' / 'static',

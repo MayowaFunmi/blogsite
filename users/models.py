@@ -24,7 +24,7 @@ class City(models.Model):
         ordering = ('id',)
 
     def __str__(self):
-        return f' {self.country.alpha_2} ({self.country.name})'
+        return f' {self.name} - ({self.country.name})'
 
 
 class Profile(models.Model):
