@@ -1,9 +1,9 @@
 from django.contrib.auth import logout, authenticate, login
 from django.contrib.auth.decorators import login_required
-from django.contrib.auth.forms import UserCreationForm
+from django.core.files.storage import FileSystemStorage
 from django.http import HttpResponse, HttpResponseRedirect
 from django.shortcuts import render, redirect
-from .forms import ProfileForm, LoginForm
+from .forms import ProfileForm, LoginForm, BlogUserCreationForm
 from .models import Country, City
 
 all_countries = [
@@ -1569,12 +1569,12 @@ def add_city(request):
 
 # create signup form
 def signup(request):
-    form = UserCreationForm()
+    form = BlogUserCreationForm()
     if request.method == 'POST':
-        form = UserCreationForm(request.POST)
+        form = BlogUserCreationForm(request.POST)
         if form.is_valid():
             form.save()
-            return redirect('/users/add_profile/')
+            return redirect('/users/login/')
 
     return render(request, 'users/signup_form.html', {'form': form})
 
@@ -1593,7 +1593,7 @@ def user_login(request):
             if user is not None:
                 if user.is_active:
                     login(request, user)
-                    return redirect('/blog/post_list/')
+                    return redirect('/users/add_profile/')
 
     return render(request, 'users/user_login.html', {'form': form})
 
@@ -1602,20 +1602,41 @@ def user_login(request):
 @login_required
 def user_logout(request):
     logout(request)
-    return HttpResponseRedirect('')
+    return redirect('/users/login/')
 
 
 # create profile view
+@login_required
 def profile_create_view(request):
     form = ProfileForm()
     if request.method == 'POST':
-        form = ProfileForm(request.POST)
+        form = ProfileForm(instance=request.user.profile, data=request.POST, files=request.FILES)
         if form.is_valid():
             form.save(commit=True)
             #myform = form.save(commit=False)
-            #myform.name = request.user
+            #myform.user = request.user
             #myform.save()
-            return redirect('/blog/post_list/')
+
+            profile_picture = request.FILES['profile_picture']
+            fs = FileSystemStorage()
+            photo_filename = fs.save(profile_picture.name, profile_picture)
+
+            context = {
+                'username': request.user.username,
+                'email': request.user.email,
+                'first_name': request.user.first_name,
+                'last_name': request.user.last_name,
+                'date_of_birth': form.cleaned_data['date_of_birth'],
+                'gender': form.cleaned_data['gender'],
+                'country': form.cleaned_data['country'],
+                'city': form.cleaned_data['city'],
+                'address': form.cleaned_data['address'],
+                'phone_number': form.cleaned_data['phone_number'],
+                'interest': form.cleaned_data['interest'],
+                'about_me': form.cleaned_data['about_me'],
+                'profile_picture': fs.url(photo_filename),
+            }
+            return render(request, 'users/user_profile_details.html', context)
     return render(request, 'users/create_profile.html', {'form': form})
 
 

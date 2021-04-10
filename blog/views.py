@@ -8,7 +8,9 @@ from django.shortcuts import render, get_object_or_404
 from taggit.models import Tag
 from django.db.models import Count
 from .forms import EmailPostForm, CommentForm, SearchForm, PostForm
-from .models import Post
+from .models import Post, Category
+
+
 # Create your views here.
 
 
@@ -126,7 +128,7 @@ def post_search(request):
             query = form.cleaned_data['query']
             # results = Post.published.annotate(search=SearchVector('title', 'body'),).filter(search=query)
             # search_vector = SearchVector('title', 'body', 'categories')
-            search_vector = SearchVector('title', weight='A') + SearchVector('body', weight='B') + SearchVector('categories__name', weight='B')
+            search_vector = SearchVector('title', weight='A') + SearchVector('body', weight='B') + SearchVector('categories', weight='B')
             search_query = SearchQuery(query)
             results = Post.published.annotate(search=search_vector,
                                               rank=SearchRank(search_vector, search_query)
@@ -136,6 +138,11 @@ def post_search(request):
                                                          'results': results})
 
 
+def post_category(request, cats):
+    category_posts = Post.objects.filter(categories=cats).order_by('-publish')
+    return render(request, "blog/post/category_post_list.html", {'cats': cats, 'category_posts': category_posts})
+
+
 @login_required
 def blog_category(request, category):
     posts = Post.objects.filter(
@@ -143,7 +150,6 @@ def blog_category(request, category):
     ).order_by(
         '-publish'
     )
-    print(category)
     context = {
         "category": category,
         "posts": posts
