@@ -78,6 +78,22 @@
         </a>
     </div>
 
+    <div>
+        <form action="{% url 'blog:like_post' post.id post.publish.year post.publish.month post.publish.day post.slug %}" method="POST">
+            {% csrf_token %}
+            {% if user.is_authenticated %}
+                {% if liked %}
+                    <button type="submit" name="post_id" value="{{ post.id }}">Unlike Post</button> - {{ post.total_likes }} Likes
+                {% else %}
+                    <button type="submit" name="post_id" value="{{ post.id }}">Like Post</button> - {{ post.total_likes }} Likes
+                {% endif %}
+            {% else %}
+                <small>Please Login to like this post</small>
+            {% endif %}
+        </form>
+        <button><a href="{% url 'blog:post_list' %}">Back To All Posts</a></button>
+    </div>
+
     <h2>Similar posts</h2>
     {% for post in similar_posts %}
         <p>

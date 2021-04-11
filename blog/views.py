@@ -5,6 +5,7 @@ from django.core.mail import send_mail
 from django.core.paginator import Paginator, PageNotAnInteger, EmptyPage
 from django.http import HttpResponseRedirect
 from django.shortcuts import render, get_object_or_404
+from django.urls import reverse, reverse_lazy
 from taggit.models import Tag
 from django.db.models import Count
 from .forms import EmailPostForm, CommentForm, SearchForm, PostForm
@@ -38,7 +39,6 @@ def post_create(request):
         form = PostForm()
     return render(request, 'blog/post/create.html', {'form': form})
 
-
 def post_list(request, tag_slug=None):
     object_list = Post.published.all()
     tag = None
@@ -60,13 +60,15 @@ def post_list(request, tag_slug=None):
     return render(request, 'blog/post/list.html', {'page': page, 'posts': posts, 'tag': tag})
 
 
-def post_detail(request, year, month, day, post):
-    post = get_object_or_404(Post, slug=post,
+def post_detail(request, id, year, month, day, posts):
+    post = get_object_or_404(Post, id=id, slug=posts,
                              status='published',
                              publish__year=year,
                              publish__month=month,
                              publish__day=day)
-
+    liked = False
+    if post.likes.filter(id=request.user.id).exists():
+        liked = True
     # List of active comments for this post
     comments = post.comments.filter(active=True)
     new_comment = None
@@ -86,13 +88,13 @@ def post_detail(request, year, month, day, post):
     post_tags_ids = post.tags.values_list('id', flat=True)
     similar_posts = Post.published.filter(tags__in=post_tags_ids).exclude(id=post.id)
     similar_posts = similar_posts.annotate(same_tags=Count('tags')).order_by('-same_tags', '-publish')[:4]
-
     return render(request, 'blog/post/detail.html', {
         'post': post,
         'comments': comments,
         'new_comment': new_comment,
         'comment_form': comment_form,
-        'similar_posts': similar_posts
+        'similar_posts': similar_posts,
+        'liked': liked
     })
 
 
@@ -137,7 +139,7 @@ def post_search(request):
                                                          'query': query,
                                                          'results': results})
 
-
+@login_required
 def post_category(request, cats):
     category_posts = Post.objects.filter(categories=cats).order_by('-publish')
     return render(request, "blog/post/category_post_list.html", {'cats': cats, 'category_posts': category_posts})
@@ -156,6 +158,25 @@ def blog_category(request, category):
     }
     return render(request, "blog/post/category_post_list.html", context)
 
+
+def like_view(request, id, year, month, day, posts):
+    liked = False
+
+    if request.method == 'POST':
+        post = get_object_or_404(Post, id=request.POST.get('post_id'),
+                                 slug=posts,
+                                 status='published',
+                                 publish__year=year,
+                                 publish__month=month,
+                                 publish__day=day)
+        if post.likes.filter(id=request.user.id).exists():
+            post.likes.remove(request.user)
+            liked = False
+        else:
+            post.likes.add(request.user)
+            liked = True
+
+    return HttpResponseRedirect(reverse('blog:post_detail', args=[int(id), int(year), int(month), int(day), str(posts)]))
 
 '''
 def create_post(request):
