@@ -31,6 +31,7 @@ class Post(models.Model):
     author = models.ForeignKey(User, on_delete=models.CASCADE, related_name='blog_posts')
     body = RichTextField()
     categories = models.CharField(max_length=250)
+    likes = models.ManyToManyField(User, related_name='blog_post')
     publish = models.DateTimeField(default=timezone.now)
     created = models.DateTimeField(auto_now_add=True)
     updated = models.DateTimeField(auto_now=True)
@@ -42,9 +43,13 @@ class Post(models.Model):
     class Meta:
         ordering = ('-publish',)
 
+    def total_likes(self):
+        return self.likes.count()
+
     def get_absolute_url(self):
         return reverse('blog:post_detail',
-                       args=[self.publish.year,
+                       args=[self.id,
+                             self.publish.year,
                              self.publish.month,
                              self.publish.day, self.slug])
 

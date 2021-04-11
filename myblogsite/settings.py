@@ -140,10 +140,9 @@ USE_TZ = True
 LOGIN_URL = '/users/login/'
 LOGIN_REDIRECT_URL = '/blog/'
 STATIC_URL = '/static/'
-STATICFILES_DIRS = [STATIC_DIR,
+STATIC_ROOT = [STATIC_DIR,
                     BASE_DIR / 'blog' / 'static',
-                    BASE_DIR / 'users' / 'static',
-                    ]
+                    BASE_DIR / 'users' / 'static',]
 MEDIA_ROOT = MEDIA_DIR
 MEDIA_URL = '/media/'
 #AUTH_USER_MODEL = 'blog.CustomUser'     use custom user model in place of built-in user model
