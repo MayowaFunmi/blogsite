@@ -39,6 +39,7 @@ def post_create(request):
         form = PostForm()
     return render(request, 'blog/post/create.html', {'form': form})
 
+
 def post_list(request, tag_slug=None):
     object_list = Post.published.all()
     tag = None
@@ -98,6 +99,7 @@ def post_detail(request, id, year, month, day, posts):
     })
 
 
+@login_required
 def post_share(request, post_id):
     # Retrieve post by id
     post = get_object_or_404(Post, id=post_id, status='published')
