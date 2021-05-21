@@ -1593,16 +1593,22 @@ def user_login(request):
             if user is not None:
                 if user.is_active:
                     login(request, user)
-                    return redirect('/users/add_profile/')
+                    return redirect('/users/dashboard/')
 
     return render(request, 'users/user_login.html', {'form': form})
+
+
+# dashboard view
+@login_required
+def dashboard(request):
+    return render(request, 'users/dashboard.html', {'section': 'dashboard'})
 
 # logout view
 
 @login_required
 def user_logout(request):
     logout(request)
-    return redirect('/users/login/')
+    return HttpResponseRedirect('/users/login/')
 
 
 # create profile view

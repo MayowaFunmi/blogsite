@@ -8,55 +8,51 @@
         <meta http-equiv="X-UA-Compatible" content="IE=edge">
         <meta name="viewport" content="width=device-width, initial-scale=1.0">
         <title>{% block title %}{% endblock %}</title>
+        <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.0.0-beta3/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-eOJMYsd53ii+scO/bJGFsiCZc+5NDVN2yr8+0RDqr0Ql0h+rP48ckxlpbzKgwra6" crossorigin="anonymous">
         <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.3/css/all.min.css">
         <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700;800;900&display=swap" rel="stylesheet">
+        <!-- reference your installed Font Awesome Free package's files here -->
+        <link href="{% static 'fontawesome_free/css/all.min.css' %}" rel="stylesheet" type="text/css">
         <link href="{% static 'css/blog.css' %}" rel="stylesheet">
+        <script src="{% static 'fontawesome_free/js/all.min.js' %}"></script>
+
         {% block style %}
+        
         {% endblock style %}
 
     </head>
 
     <body>
 
-        <!-- navbar start -->
-        <nav class="navbar navbar-expand-lg fixed-top">
-        <div class="container">
-            <a class="navbar-brand" href="index.html">Mayor Apps</a>
-            <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNavDropdown" aria-controls="navbarNavDropdown" aria-expanded="false" aria-label="Toggle navigation">
-                <span class="navbar-toggler-icon"></span>
-            </button>
-            <div class="collapse navbar-collapse" id="navbarNavDropdown" style="float: right;">
-                <ul class="navbar-nav">
-                    <li class="nav-item">
-                        <a class="nav-link active" href="#">Home</a>
-                    </li>
-                    <li class="nav-item">
-                        <a class="nav-link" href="#">Pricing</a>
-                    </li>
-                    <li class="nav-item">
-                        <a class="nav-link" href="#">Screenshots</a>
-                    </li>
-                    <li class="nav-item">
-                        <a class="nav-link" href="#">Testimonials</a>
-                    </li>
-                    <li class="nav-item">
-                        <a class="nav-link" href="#">Contact</a>
-                    </li>
-                    <li class="nav-item dropdown">
-                        <a class="nav-link dropdown-toggle" href="#" id="navbarDropdownMenuLink" role="button" data-bs-toggle="dropdown" aria-expanded="false">
-                            Dropdown link
-                        </a>
-                        <ul class="dropdown-menu" aria-labelledby="navbarDropdownMenuLink">
-                            <li><a class="dropdown-item" href="#">Action</a></li>
-                            <li><a class="dropdown-item" href="#">Another action</a></li>
-                            <li><a class="dropdown-item" href="#">Something else here</a></li>
+        <div id="header">
+            <div class="row">
+                <div class="col-sm-8">
+                    <div class="logo">
+                        <span class="header_text"  id='welcome'>Welcome To Mayowa's Blog</span>
+                        <small class="header_text">News, Events, Entertainment, Lifestyle, Fashion, Beauty, Inspiration, Gossip...</small>
+                    </div>
+                </div>
+
+                <div class="col-sm-4">
+                    {% if request.user.is_authenticated %}
+                        <ul class="menu">
+                            <li><a href="{% url 'blog:post_create' %}">Create Post</a></li>
                         </ul>
-                    </li>
-                </ul>
+                    {% endif %}
+
+                    <span class="user">
+                        {% if request.user.is_authenticated %}
+                            Hello {{ request.user.first_name }},
+                            <a href="{% url 'users:logout' %}">Logout</a>
+                        {% else %}
+                            <a href="{% url 'users:login' %}">Log-In</a> |
+                            <a href="{% url 'users:user_signup' %}">Sign Up</a>
+                        {% endif %}
+                    </span>
+                </div>
             </div>
+
         </div>
-        </nav>
-        <!-- navbar end -->
 
         <div id="content">
             {% block content %}
@@ -64,7 +60,6 @@
         </div>
 
         <div id="sidebar">
-            <h2>My blog</h2>
             <button><a href="{% url 'blog:post_search' %}">Search Blog</a></button>
             <p>This is my blog. I've written {% total_posts %} posts so far.</p>
             <p>
@@ -85,6 +80,8 @@
         </div>
 
 
+        <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.9.1/dist/umd/popper.min.js" integrity="sha384-SR1sx49pcuLnqZUnnPwx6FCym0wLsk5JZuNx2bPPENzswTNFaQU1RDvt3wT4gWFG" crossorigin="anonymous"></script>
+        <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.0.0-beta3/dist/js/bootstrap.min.js" integrity="sha384-j0CNLUeiqtyaRmlzUHCPZ+Gy5fQu0dQ6eZ/xAww941Ai1SxSY+0EQqNXNE6DZiVc" crossorigin="anonymous"></script>
         <script src="{% static 'js/main.js' %}"></script>
     </body>
 </html>

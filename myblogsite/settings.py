@@ -41,13 +41,15 @@ INSTALLED_APPS = [
     'django.contrib.staticfiles',
     'blog',
     'users',
+    'direct_messages',
+    'images',
     'taggit',
     'django.contrib.sites',
     'django.contrib.sitemaps',
     'django.contrib.postgres',
     'ckeditor',
     'django_countries',
-
+    'fontawesome-free',
     'allauth',
     'allauth.account',
     'allauth.socialaccount',
@@ -138,11 +140,9 @@ USE_TZ = True
 # https://docs.djangoproject.com/en/3.1/howto/static-files/
 
 LOGIN_URL = '/users/login/'
-LOGIN_REDIRECT_URL = '/blog/'
+LOGIN_REDIRECT_URL = 'users:dashboard'
 STATIC_URL = '/static/'
-STATIC_ROOT = [STATIC_DIR,
-                    BASE_DIR / 'blog' / 'static',
-                    BASE_DIR / 'users' / 'static',]
+STATIC_ROOT = [STATIC_DIR, ]
 MEDIA_ROOT = MEDIA_DIR
 MEDIA_URL = '/media/'
 #AUTH_USER_MODEL = 'blog.CustomUser'     use custom user model in place of built-in user model
