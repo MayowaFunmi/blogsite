@@ -1,6 +1,7 @@
 from django.conf import settings
 from django.contrib.auth.decorators import login_required
 from django.contrib.postgres.search import SearchVector, SearchQuery, SearchRank
+from django.core.files.storage import FileSystemStorage
 from django.core.mail import send_mail
 from django.core.paginator import Paginator, PageNotAnInteger, EmptyPage
 from django.http import HttpResponseRedirect
@@ -18,13 +19,13 @@ from .models import Post, Category
 @login_required
 def post_create(request):
     if request.method == 'POST':
-        form = PostForm(request.POST)
+        form = PostForm(data=request.POST, files=request.FILES)
 
         if form.is_valid():
             title = form.cleaned_data['title']
             t_str = title.lower()
             for i in range(0, len(t_str), 1):
-                if (t_str[i] == ' '):
+                if t_str[i] == ' ':
                     t_str = t_str.replace(t_str[i], '-')
             obj = form.save(commit=False)
             obj.author = request.user
@@ -42,6 +43,7 @@ def post_create(request):
 
 def post_list(request, tag_slug=None):
     object_list = Post.published.all()
+    categories = Category.objects.all()
     tag = None
 
     if tag_slug:
@@ -58,10 +60,11 @@ def post_list(request, tag_slug=None):
     except EmptyPage:
         # If page is out of range deliver last page of results
         posts = paginator.page(paginator.num_pages)
-    return render(request, 'blog/post/list.html', {'page': page, 'posts': posts, 'tag': tag})
+    return render(request, 'blog/post/list.html', {'page': page, 'posts': posts, 'tag': tag, 'categories': categories})
 
 
 def post_detail(request, id, year, month, day, posts):
+    categories = Category.objects.all()
     post = get_object_or_404(Post, id=id, slug=posts,
                              status='published',
                              publish__year=year,
@@ -95,7 +98,8 @@ def post_detail(request, id, year, month, day, posts):
         'new_comment': new_comment,
         'comment_form': comment_form,
         'similar_posts': similar_posts,
-        'liked': liked
+        'liked': liked,
+        'categories': categories
     })
 
 
@@ -147,7 +151,7 @@ def post_category(request, cats):
     return render(request, "blog/post/category_post_list.html", {'cats': cats, 'category_posts': category_posts})
 
 
-@login_required
+#@login_required
 def blog_category(request, category):
     posts = Post.objects.filter(
         categories__name__contains=category

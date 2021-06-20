@@ -9,6 +9,7 @@ urlpatterns = [
     # path('add_city/', views.add_city, name='add_city'),
     path('user_signup/', views.signup, name='user_signup'),
     path('add_profile/', views.profile_create_view, name='add_profile'),
+    path('profile_details/<int:id>', views.profile_details, name='profile_details'),
     path('ajax/load-cities/', views.load_cities, name='ajax_load_cities'),  # <-- this one here
     path('login/', views.user_login, name='login'),
     path('dashboard/', views.dashboard, name='dashboard'),

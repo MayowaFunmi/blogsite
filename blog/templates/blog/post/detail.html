@@ -9,9 +9,15 @@
         background: #fff;
         display: flex;
         flex-direction: row;
+        flex-wrap: nowrap;
         padding: 1px;
         position: relative;
         top: 30%;
+        width: 50px;
+        text-align: center;
+        text-decoration: none;
+        margin: 5px 2px;
+        font-size: 20px;
     }
 
     .share-btn-container a i {
@@ -27,20 +33,34 @@
         transform: scale(1.2);
     }
 
-    .share-btn-container .fa-facebook {
-        color: #3b5998;
+    .share-btn-container .facebook-btn {
+        background: #3b5998;
+        color: white;
+        padding: 20px;
     }
 
-    .share-btn-container .fa-twitter {
-        color: #1da1f2;
+    .share-btn-container .twitter-btn {
+        background: #55ACEE;
+        color: white;
+        padding: 20px;
     }
 
-    .share-btn-container .fa-linkedin {
-        color: #0077b5;
+    .share-btn-container .linkedin-btn {
+        background: #0077b5;
+        color: white;
+        padding: 20px;
     }
 
-    .share-btn-container .fa-whatsapp {
-        color: #25d366;
+    .share-btn-container .whatsapp-btn {
+        background: #25d366;
+        color: white;
+        padding: 20px;
+    }
+
+    .share-btn-container .email-btn {
+        background: yellow;
+        color: white;
+        padding: 20px;
     }
 
 </style>
@@ -49,11 +69,28 @@
 
 {% block content %}
 
-    <h1>{{ post.title }}</h1>
-    <p class="date">
-        Published {{ post.publish }} by {{ post.author.first_name }} {{ post.author.last_name }}
-    </p>
-    {{ post.body|markdown }}
+    <div class="post_outer">
+        <article class="post">
+            <h2 class="post_title">{{ post.title }}</h2>
+                <small class="post_name">by {{ post.author.first_name }} {{ post.author.last_name }}</small>
+                <hr>
+            <div class="post_info">
+                <p class="date">
+                    {{ post.publish }}
+                </p>
+            </div>
+            <div class="post_body">
+                <img src="{{ post.post_image.url }}" style="width: 100px; height=100px; border-radius: 20px;" alt="No Post Image">
+                {{ post.body|markdown }}
+            </div>
+        </article>
+    </div>
+
+
+
+
+
+
     <p><em>Share this post on your social media page:</em></p>
 
     <div class="share-btn-container">
@@ -73,7 +110,7 @@
             <i class="fab fa-whatsapp"></i>
         </a>
 
-        <a href="{% url 'blog:post_share' post.id %}">
+        <a  class="email-btn" href="{% url 'blog:post_share' post.id %}">
             <i class="far fa-envelope"></i>
         </a>
     </div>
@@ -91,7 +128,7 @@
                 <small>Please Login to like this post</small>
             {% endif %}
         </form>
-        <button><a href="{% url 'blog:post_list' %}">Back To All Posts</a></button>
+        <button class="tag_button"><a href="{% url 'blog:post_list' %}">Back To All Posts</a></button>
     </div>
 
     <h2>Similar posts</h2>
@@ -103,7 +140,11 @@
         There are no similar posts yet.
     {% endfor %}
 
-    {% with comments.count as total_comments %}
+
+
+
+    <div class="comments">
+        {% with comments.count as total_comments %}
         <h2>
             {{ total_comments }} comment{{ total_comments|pluralize }}
         </h2>
@@ -123,6 +164,13 @@
 
     {% if new_comment %}
         <h2>Your comment has been added.</h2>
+        <h2>Add another comment</h2>
+        <form method="post">
+            {{ comment_form.media }}
+            {{ comment_form.as_p }}
+            {% csrf_token %}
+            <p><input type="submit" value="Add comment"></p>
+        </form>
     {% else %}
         <h2>Add a new comment</h2>
         <form method="post">
@@ -132,4 +180,7 @@
             <p><input type="submit" value="Add comment"></p>
         </form>
     {% endif %}
+    </div>
+
+
 {% endblock %}
