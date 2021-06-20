@@ -17,7 +17,7 @@ for item in choices:
 class PostForm(forms.ModelForm):
     class Meta:
         model = Post
-        fields = ('categories', 'title', 'body', 'tags')
+        fields = ('categories', 'title', 'body', 'post_image', 'tags')
         widgets = {'categories': forms.Select(choices=choice_list)}
 
 
